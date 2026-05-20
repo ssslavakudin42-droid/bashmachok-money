@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#3E2723">
+<title>👞 Башмачок Деньги</title>
+<style>
+:root {
+  --brand: #3E2723;
+  --brand-light: #5D4037;
+  --gold: #FFC107;
+  --gold-dark: #FFA000;
+  --cream: #FAF6EE;
+  --paper: #FFFFFF;
+  --ink: #1A0E0C;
+  --muted: #8C7B70;
+  --line: #E8DDC9;
+  --line-soft: #F2EADA;
+  --green: #1D9E75;
+  --green-light: #E1F5EE;
+  --red: #C73E3E;
+  --red-light: #FCEBEB;
+  --orange: #EF9F27;
+  --orange-light: #FAEEDA;
+  --blue: #2196F3;
+  --blue-light: #E3F2FD;
+  --shadow: 0 1px 3px rgba(62,39,35,0.06);
+  --shadow-md: 0 4px 16px rgba(62,39,35,0.08);
+  --shadow-lg: 0 12px 32px rgba(62,39,35,0.12);
+  --shadow-xl: 0 24px 60px rgba(62,39,35,0.18);
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+.num { font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; }
+
+/* Каркас */
+.app { max-width: 480px; margin: 0 auto; min-height: 100vh; padding-bottom: 100px; }
+.header {
+  background: var(--brand);
+  color: var(--cream);
+  padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+  box-shadow: var(--shadow-md);
+}
+.header h1 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: 0.2px; }
+.header .logo { font-size: 22px; }
+.header .date-pick {
+  background: rgba(255,193,7,0.15);
+  border: 1px solid rgba(255,193,7,0.4);
+  color: var(--gold);
+  padding: 6px 12px; border-radius: var(--radius); font-size: 13px;
+  cursor: pointer;
+}
+
+/* Табы */
+.tabs {
+  display: flex; gap: 4px;
+  padding: 12px 14px 0;
+  background: var(--cream);
+  position: sticky; top: 52px; z-index: 9;
+}
+.tab {
+  flex: 1; padding: 9px 0;
+  background: transparent;
+  border: none;
+  font-size: 12px; color: var(--muted);
+  font-weight: 500;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.tab.active {
+  background: var(--brand);
+  color: var(--cream);
+}
+
+.page { padding: 14px; }
+.page.hidden { display: none; }
+
+/* Главная цифра */
+.hero {
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  padding: 20px 18px;
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+  border: 1px solid var(--line-soft);
+}
+.hero .label { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+.hero .big { font-size: 36px; font-weight: 700; color: var(--brand); }
+.hero .big.green { color: var(--green); }
+.hero .big.red { color: var(--red); }
+.hero .sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+/* Карточка-блок */
+.card {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 12px;
+  border: 1px solid var(--line-soft);
+}
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 15px;
+}
+.row:last-child { border-bottom: none; }
+.row .name { color: var(--ink); }
+.row .name .icon { margin-right: 8px; }
+.row .val { font-weight: 600; }
+.row .val.minus { color: var(--red); }
+.row .val.plus { color: var(--green); }
+.row.total {
+  border-top: 2px solid var(--line);
+  margin-top: 6px;
+  padding-top: 12px;
+  font-size: 17px;
+}
+
+/* Бейджи зон */
+.zone {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+}
+.zone-warn { background: var(--red-light); color: var(--red); }
+.zone-ok { background: var(--green-light); color: var(--green); }
+.zone-info { background: var(--blue-light); color: #1565C0; }
+.zone-hot { background: var(--orange-light); color: #BF6F00; }
+
+/* Кнопки внизу — фиксированные */
+.bottom-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--cream);
+  padding: 14px 14px calc(14px + env(safe-area-inset-bottom));
+  display: flex; gap: 10px;
+  max-width: 480px;
+  margin: 0 auto;
+  border-top: 1px solid var(--line);
+  z-index: 20;
+}
+.btn-big {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  font-family: inherit;
+}
+.btn-income {
+  background: var(--green);
+  color: white;
+}
+.btn-expense {
+  background: var(--brand);
+  color: var(--cream);
+}
+.btn-save {
+  background: var(--gold);
+  color: var(--brand);
+}
+.bottom-bar .btn-big {
+  font-size: 14px;
+  padding: 14px 6px;
+}
+
+/* Цель */
+.goal {
+  background: linear-gradient(135deg, var(--brand) 0%, #2A1A17 100%);
+  color: var(--cream);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.goal::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(255,193,7,0.2) 0%, transparent 70%);
+}
+.goal .glabel { font-size: 12px; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; }
+.goal .gnow { font-size: 28px; font-weight: 700; margin: 4px 0; }
+.goal .gtarget { font-size: 13px; opacity: 0.7; }
+.progress {
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-dark) 100%);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+.progress-text {
+  display: flex; justify-content: space-between;
+  font-size: 12px; margin-top: 6px; opacity: 0.8;
+}
+
+/* AI подсказки */
+.ai-alert {
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  display: flex; gap: 10px; align-items: flex-start;
+  border-left: 3px solid;
+}
+.ai-alert.warn { background: var(--red-light); border-color: var(--red); }
+.ai-alert.ok { background: var(--green-light); border-color: var(--green); }
+.ai-alert.info { background: var(--blue-light); border-color: var(--blue); }
+.ai-alert.hot { background: var(--orange-light); border-color: var(--orange); }
+.ai-alert .ai-icon { font-size: 18px; flex-shrink: 0; }
+.ai-alert .ai-text { font-size: 13px; line-height: 1.4; color: var(--ink); }
+
+/* Лента операций */
+.op {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.op:last-child { border-bottom: none; }
+.op-icon {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.op-icon.in { background: var(--green-light); }
+.op-icon.out { background: var(--red-light); }
+.op-icon.save { background: #FFF4D6; }
+.op-info { flex: 1; min-width: 0; }
+.op-name { font-size: 14px; font-weight: 500; }
+.op-meta { font-size: 12px; color: var(--muted); }
+.op-amount { font-weight: 600; font-size: 15px; white-space: nowrap; }
+.op-amount.in { color: var(--green); }
+.op-amount.out { color: var(--red); }
+.op-amount.save { color: var(--gold-dark); }
+.op-del {
+  background: transparent; border: none;
+  color: var(--muted); cursor: pointer;
+  font-size: 18px; padding: 4px 8px;
+}
+
+/* Модалка ввода */
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(26,14,12,0.4);
+  display: none;
+  align-items: flex-end;
+  z-index: 100;
+}
+.modal-bg.show { display: flex; }
+.modal {
+  background: var(--cream);
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 18px 18px calc(18px + env(safe-area-inset-bottom));
+  box-shadow: var(--shadow-xl);
+}
+.modal h2 {
+  margin: 0 0 14px;
+  font-size: 18px;
+  color: var(--brand);
+}
+.field { margin-bottom: 12px; }
+.field label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+.field input, .field select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--ink);
+}
+.field input.num { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 600; text-align: right; }
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.cat-btn {
+  padding: 12px 8px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: var(--radius);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: var(--ink);
+}
+.cat-btn.active {
+  background: var(--brand);
+  color: var(--cream);
+  border-color: var(--brand);
+}
+.cat-btn .cat-icon { margin-right: 6px; }
+.modal-actions {
+  display: flex; gap: 10px;
+  margin-top: 14px;
+}
+.btn-ghost {
+  flex: 1; padding: 14px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: 15px; color: var(--brand);
+  cursor: pointer; font-family: inherit;
+}
+.btn-primary {
+  flex: 2; padding: 14px;
+  background: var(--brand);
+  color: var(--cream);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+}
+
+/* Пустота */
+.empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Шаблоны быстрых */
+.quick-templates {
+  display: flex; gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 14px;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+.qtmpl {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  color: var(--brand);
+}
+.qtmpl strong { color: var(--ink); }
+.qtmpl.active {
+  background: var(--brand);
+  color: var(--cream);
+  border-color: var(--brand);
+}
+
+/* Простые столбики */
+.bars { display: flex; gap: 4px; align-items: flex-end; height: 100px; padding: 8px 0; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bar-fill {
+  width: 100%;
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dark) 100%);
+  border-radius: 4px 4px 0 0;
+  min-height: 2px;
+  transition: height 0.3s ease;
+}
+.bar-label { font-size: 10px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- Шапка -->
+<div class="header">
+  <div style="display:flex; align-items:center; gap:10px;">
+    <span class="logo">👞</span>
+    <h1>Башмачок · Деньги</h1>
+  </div>
+  <button class="date-pick" id="periodBtn">Май 2026</button>
+</div>
+
+<!-- Табы -->
+<div class="tabs">
+  <button class="tab active" data-tab="home">Главная</button>
+  <button class="tab" data-tab="ops">Лента</button>
+  <button class="tab" data-tab="dash">📊 Дашборд</button>
+  <button class="tab" data-tab="goal">Цель</button>
+</div>
+
+<!-- СТРАНИЦА: ГЛАВНАЯ -->
+<div class="page" id="page-home">
+
+  <!-- Чистая прибыль за месяц -->
+  <div class="hero">
+    <div class="label">Чистая прибыль за месяц</div>
+    <div class="big num green" id="netMonth">+0 ₸</div>
+    <div class="sub" id="netSub">Можно тратить или откладывать</div>
+  </div>
+
+  <!-- AI подсказки -->
+  <div id="aiAlerts"></div>
+
+  <!-- Сегодня -->
+  <div class="card">
+    <h3>Сегодня</h3>
+    <div class="row"><span class="name">💰 Выручка</span><span class="val num plus" id="todayIn">0 ₸</span></div>
+    <div class="row"><span class="name">📦 Товар маме</span><span class="val num minus" id="todaySupply">0 ₸</span></div>
+    <div class="row"><span class="name">💸 Прочие расходы</span><span class="val num minus" id="todayOut">0 ₸</span></div>
+    <div class="row total"><span class="name">Остаток дня</span><span class="val num" id="todayNet">0 ₸</span></div>
+  </div>
+
+  <!-- Копилка месяца -->
+  <div class="card">
+    <h3>📥 Копилка месяца</h3>
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 10px;">
+      <div>
+        <div style="font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Отложено</div>
+        <div class="num" style="font-size:24px; font-weight:700; color:var(--brand);" id="savedMonth">0 ₸</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">План (<span id="savePctLabel">10</span>% от выручки)</div>
+        <div class="num" style="font-size:18px; font-weight:600; color:var(--muted);" id="savePlan">0 ₸</div>
+      </div>
+    </div>
+    <div class="progress" style="background: var(--line-soft); height: 10px;">
+      <div class="progress-bar" id="saveBar" style="width: 0%"></div>
+    </div>
+    <div class="progress-text" style="opacity: 0.7; color: var(--muted);">
+      <span><span class="num" id="savePctDone">0</span>% от плана</span>
+      <span id="saveLeftLabel">Остаток плана: <span class="num">0</span> ₸</span>
+    </div>
+  </div>
+
+  <!-- Долг маме -->
+  <div class="card" id="debtCard" style="cursor: pointer;" onclick="openDebtModal()">
+    <h3>👩 Долг маме (товар)</h3>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div class="num" id="debtAmt" style="font-size: 28px; font-weight: 700; color: var(--red);">0 ₸</div>
+        <div style="font-size: 12px; color: var(--muted); margin-top: 2px;">Тапни чтобы изменить</div>
+      </div>
+      <div style="text-align: right; font-size: 12px; color: var(--muted);">
+        <div>За месяц погашено:</div>
+        <div class="num" id="debtPaidMonth" style="font-size: 16px; font-weight: 600; color: var(--green); margin-top: 2px;">0 ₸</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Простые столбики последних дней -->
+  <div class="card">
+    <h3>Последние 7 дней</h3>
+    <div class="bars" id="weekBars"></div>
+  </div>
+</div>
+
+<!-- СТРАНИЦА: ЛЕНТА -->
+<div class="page hidden" id="page-ops">
+  <div class="card">
+    <h3>Фильтр</h3>
+    <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+      <button class="qtmpl ftype active" data-ftype="all" onclick="setOpFilter('all')">Все</button>
+      <button class="qtmpl ftype" data-ftype="income" onclick="setOpFilter('income')">💰 Приход</button>
+      <button class="qtmpl ftype" data-ftype="expense" onclick="setOpFilter('expense')">💸 Расход</button>
+      <button class="qtmpl ftype" data-ftype="save" onclick="setOpFilter('save')">📥 Откладывания</button>
+    </div>
+    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+      <button class="qtmpl" onclick="setOpRange('week')">Неделя</button>
+      <button class="qtmpl" onclick="setOpRange('month')">Месяц</button>
+      <button class="qtmpl" onclick="setOpRange('all')">Всё</button>
+    </div>
+    <div id="opsRangeLabel" style="font-size:12px; color:var(--muted); margin-top:8px;"></div>
+  </div>
+  <div class="card">
+    <h3>Операции <span id="opsCount" style="color:var(--muted); font-weight:400;">(0)</span></h3>
+    <div id="opsList"></div>
+  </div>
+</div>
+
+<!-- СТРАНИЦА: ДАШБОРД -->
+<div class="page hidden" id="page-dash">
+
+  <!-- Выбор периода -->
+  <div class="card">
+    <h3>📅 Период</h3>
+    <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+      <button class="qtmpl" onclick="setRange('today')">Сегодня</button>
+      <button class="qtmpl" onclick="setRange('week')">7 дней</button>
+      <button class="qtmpl" onclick="setRange('month')">Месяц</button>
+      <button class="qtmpl" onclick="setRange('prev_month')">Прошлый месяц</button>
+      <button class="qtmpl" onclick="setRange('quarter')">3 месяца</button>
+      <button class="qtmpl" onclick="setRange('all')">Всё время</button>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <input type="date" id="rangeFrom" style="flex:1; padding:8px; border:1px solid var(--line); border-radius:var(--radius); background:var(--paper); font-family:inherit;">
+      <span style="color:var(--muted); font-size:13px;">→</span>
+      <input type="date" id="rangeTo" style="flex:1; padding:8px; border:1px solid var(--line); border-radius:var(--radius); background:var(--paper); font-family:inherit;">
+    </div>
+    <button class="btn-primary" style="width:100%; margin-top:10px;" onclick="applyRange()">Применить</button>
+    <div id="rangeLabel" style="font-size:12px; color:var(--muted); margin-top:8px; text-align:center;"></div>
+  </div>
+
+  <!-- Главные цифры периода -->
+  <div class="hero">
+    <div class="label">Чистая прибыль за период</div>
+    <div class="big num" id="dashNet">+0 ₸</div>
+    <div class="sub" id="dashNetSub">Выручка − все расходы</div>
+  </div>
+
+  <!-- Сводка по категориям -->
+  <div class="card">
+    <h3>📊 По категориям</h3>
+    <div class="row"><span class="name">💰 Выручка</span><span class="val num plus" id="dIn">0 ₸</span></div>
+    <div class="row"><span class="name">📦 Товар маме</span><span class="val num minus" id="dSupply">0 ₸</span></div>
+    <div class="row"><span class="name">🏠 Аренда</span><span class="val num minus" id="dRent">0 ₸</span></div>
+    <div class="row"><span class="name">👥 Зарплаты</span><span class="val num minus" id="dSalary">0 ₸</span></div>
+    <div class="row"><span class="name">📋 Прочее</span><span class="val num minus" id="dOther">0 ₸</span></div>
+    <div class="row"><span class="name">👤 Личное</span><span class="val num minus" id="dPersonal">0 ₸</span></div>
+    <div class="row"><span class="name">📥 Отложено</span><span class="val num" id="dSaved" style="color:var(--gold-dark);">0 ₸</span></div>
+    <div class="row total"><span class="name">Чистая прибыль</span><span class="val num" id="dNetRow">0 ₸</span></div>
+  </div>
+
+  <!-- Куда уходит — пирог -->
+  <div class="card">
+    <h3>🥧 Куда уходят деньги</h3>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <div id="pieChart" style="flex-shrink:0;"></div>
+      <div id="pieLegend" style="flex:1; font-size:13px;"></div>
+    </div>
+  </div>
+
+  <!-- Динамика по дням -->
+  <div class="card">
+    <h3>📈 По дням</h3>
+    <div id="dailyBars" style="display:flex; gap:2px; align-items:flex-end; height:120px; padding:8px 0; overflow-x:auto;"></div>
+    <div style="display:flex; justify-content:space-around; font-size:11px; color:var(--muted); margin-top:4px;">
+      <span>🟡 Доход</span><span>🟤 Расход</span><span>🟢 Чистый</span>
+    </div>
+  </div>
+
+  <!-- Топ дней -->
+  <div class="card">
+    <h3>🏆 Лучшие и худшие дни периода</h3>
+    <div id="topDays" style="font-size:13px;"></div>
+  </div>
+
+</div>
+
+<!-- СТРАНИЦА: ЦЕЛЬ -->
+<div class="page hidden" id="page-goal">
+  <div class="goal">
+    <div class="glabel">Цель накоплений</div>
+    <div class="gnow num" id="goalNow">7 400 000 ₸</div>
+    <div class="gtarget">из <span class="num" id="goalTarget">30 000 000</span> ₸</div>
+    <div class="progress"><div class="progress-bar" id="goalBar" style="width: 24.6%"></div></div>
+    <div class="progress-text">
+      <span><span class="num" id="goalPct">24.6</span>%</span>
+      <span>Осталось <span class="num" id="goalLeft">22 600 000</span> ₸</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📥 Где лежат деньги</h3>
+    <div class="row">
+      <span class="name">🏦 Депозит</span>
+      <span class="val num" id="depAmt">6 000 000 ₸</span>
+    </div>
+    <div class="row">
+      <span class="name">📈 Инвестиции</span>
+      <span class="val num" id="invAmt">1 400 000 ₸</span>
+    </div>
+    <div class="row total">
+      <span class="name">Всего накоплено</span>
+      <span class="val num" id="savedTotal">7 400 000 ₸</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ Настроить</h3>
+    <div class="field">
+      <label>Цель накоплений, ₸</label>
+      <input type="number" id="inGoal" value="30000000">
+    </div>
+    <div class="field">
+      <label>Сейчас на депозите, ₸</label>
+      <input type="number" id="inDep" value="6000000">
+    </div>
+    <div class="field">
+      <label>Сейчас в инвестициях, ₸</label>
+      <input type="number" id="inInv" value="1400000">
+    </div>
+    <div class="field">
+      <label>% от выручки откладывать (план)</label>
+      <input type="number" id="inSavePct" value="10" min="0" max="100">
+    </div>
+    <button class="btn-primary" style="width:100%" onclick="saveGoal()">Сохранить цель</button>
+  </div>
+
+  <div class="card" style="border: 2px solid var(--gold); background: linear-gradient(135deg, #FFF9E6 0%, var(--paper) 100%);">
+    <h3 style="color: var(--brand);">💾 СОХРАНИТЬ ДАННЫЕ</h3>
+    <p style="font-size:13px; color: var(--brand); margin: 0 0 12px; line-height:1.5;">
+      Все твои данные хранятся <strong>только в браузере</strong>. Если очистишь кэш или сменишь телефон — потеряются. <strong>Регулярно скачивай SAVE-файл!</strong>
+    </p>
+    <button class="btn-primary" style="width:100%; background: var(--gold-dark); color: var(--brand); margin-bottom:8px;" onclick="exportData()">📥 Скачать SAVE-файл</button>
+    <button class="btn-ghost" style="width:100%;" onclick="document.getElementById('importFile').click()">📤 Загрузить из файла</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    <div id="lastSaveLabel" style="font-size:12px; color:var(--muted); margin-top:10px; text-align:center;"></div>
+  </div>
+</div>
+
+<!-- Низ — кнопки -->
+<div class="bottom-bar">
+  <button class="btn-big btn-income" onclick="openModal('income')">➕ Приход</button>
+  <button class="btn-big btn-expense" onclick="openModal('expense')">➖ Расход</button>
+  <button class="btn-big btn-save" onclick="openSaveModal()">📥 Отложить</button>
+</div>
+
+</div>
+
+<!-- Модалка -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h2 id="modalTitle">Новая операция</h2>
+
+    <div class="field">
+      <label>Сумма, ₸</label>
+      <input type="number" inputmode="numeric" class="num" id="inAmount" placeholder="0">
+    </div>
+
+    <div class="field">
+      <label>Дата</label>
+      <input type="date" id="inDate">
+    </div>
+
+    <div class="field">
+      <label>Категория</label>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+
+    <div class="field">
+      <label>Комментарий (не обязательно)</label>
+      <input type="text" id="inNote" placeholder="например: касса Б-14">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn-primary" onclick="saveOp()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка долга маме -->
+<div class="modal-bg" id="debtModal">
+  <div class="modal">
+    <h2>👩 Долг маме за товар</h2>
+    <div style="background: var(--orange-light); padding: 10px 12px; border-radius: var(--radius); margin-bottom: 12px; font-size: 13px; color: #BF6F00;">
+      💡 Когда отдашь деньги маме за товар, выбери «➖ Расход → Товар маме» — долг уменьшится автоматически. Здесь можно установить текущую сумму вручную.
+    </div>
+
+    <div class="field">
+      <label>Текущий долг, ₸</label>
+      <input type="number" inputmode="numeric" class="num" id="debtAmount" placeholder="0">
+    </div>
+
+    <div class="field">
+      <label>Быстро</label>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="qtmpl" onclick="debtAdd(500000)">+500 тыс</button>
+        <button class="qtmpl" onclick="debtAdd(1000000)">+1 млн</button>
+        <button class="qtmpl" onclick="debtAdd(2000000)">+2 млн</button>
+        <button class="qtmpl" onclick="debtAdd(-500000)">−500 тыс</button>
+        <button class="qtmpl" onclick="debtSet(0)">Обнулить</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeDebtModal()">Отмена</button>
+      <button class="btn-primary" onclick="doSaveDebt()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка отложить -->
+<div class="modal-bg" id="saveModal">
+  <div class="modal">
+    <h2>📥 Отложить в копилку</h2>
+
+    <div style="background: var(--orange-light); padding: 10px 12px; border-radius: var(--radius); margin-bottom: 12px; font-size: 13px; color: #BF6F00;">
+      💡 <span id="saveHint">Сегодня выручка: 0 ₸. 10% = 0 ₸</span>
+    </div>
+
+    <div class="field">
+      <label>Быстрый выбор</label>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="qtmpl" onclick="quickSave(10, 'today')">10% сегодня</button>
+        <button class="qtmpl" onclick="quickSave(15, 'today')">15% сегодня</button>
+        <button class="qtmpl" onclick="quickSave(10, 'month')">10% месяца</button>
+        <button class="qtmpl" onclick="quickSave(0, 'plan')">До плана</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Сумма, ₸</label>
+      <input type="number" inputmode="numeric" class="num" id="saveAmount" placeholder="0">
+    </div>
+
+    <div class="field">
+      <label>Дата</label>
+      <input type="date" id="saveDate">
+    </div>
+
+    <div class="field">
+      <label>Куда</label>
+      <div class="cat-grid">
+        <button class="cat-btn" id="saveToDep" onclick="selSaveTo('deposit')"><span class="cat-icon">🏦</span>Депозит</button>
+        <button class="cat-btn" id="saveToInv" onclick="selSaveTo('invest')"><span class="cat-icon">📈</span>Инвестиции</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeSaveModal()">Отмена</button>
+      <button class="btn-primary" onclick="doSave()">Отложить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const APP_KEY = 'bashmachok-money-v0.3';
+const OLD_KEYS = ['bashmachok-money-v0.2', 'bashmachok-money-v0.1'];
+
+// Категории
+const CATEGORIES = {
+  income: [
+    { id: 'sale', name: 'Выручка', icon: '💰' },
+    { id: 'other_in', name: 'Прочий доход', icon: '🪙' }
+  ],
+  expense: [
+    { id: 'supply', name: 'Товар маме', icon: '📦', fixed: true },
+    { id: 'rent', name: 'Аренда', icon: '🏠', fixed: true },
+    { id: 'salary', name: 'Зарплаты', icon: '👥', fixed: true },
+    { id: 'other_out', name: 'Прочее', icon: '📋' },
+    { id: 'personal', name: 'Личное', icon: '👤' }
+  ]
+};
+
+// Состояние
+let state = {
+  ops: [],
+  goal: 30000000,
+  deposit: 6000000,
+  invest: 1400000,
+  savePct: 10,
+  saveTo: 'deposit',
+  motherDebt: 0   // долг маме за товар (можно править на вкладке Цель)
+};
+
+let modalType = 'income';
+let selectedCat = null;
+
+// Загрузка из localStorage
+function load() {
+  try {
+    let saved = localStorage.getItem(APP_KEY);
+    if (!saved) {
+      // ищем самую свежую старую версию
+      for (const k of OLD_KEYS) {
+        const old = localStorage.getItem(k);
+        if (old) { saved = old; break; }
+      }
+    }
+    if (saved) {
+      const loaded = JSON.parse(saved);
+      state = Object.assign(state, loaded);
+    }
+  } catch (e) { console.error(e); }
+}
+
+function save() {
+  try {
+    localStorage.setItem(APP_KEY, JSON.stringify(state));
+  } catch (e) { console.error(e); }
+}
+
+// Форматирование
+function fmt(n) {
+  return Math.round(n).toLocaleString('ru-RU').replace(/,/g, ' ') + ' ₸';
+}
+
+function fmtSigned(n) {
+  return (n >= 0 ? '+' : '') + fmt(n);
+}
+
+// Сегодняшняя дата
+function today() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function isToday(dateStr) {
+  return dateStr === today();
+}
+
+function isCurrentMonth(dateStr) {
+  const now = new Date();
+  const ym = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  return dateStr.startsWith(ym);
+}
+
+// Рендер главной
+function render() {
+  const ops = state.ops;
+  const monthOps = ops.filter(o => isCurrentMonth(o.date));
+  const todayOps = ops.filter(o => isToday(o.date));
+
+  // Сегодня
+  const todayIn = sum(todayOps, 'income');
+  const todaySupply = sumCat(todayOps, 'supply');
+  const todayOut = sumByType(todayOps, 'expense') - todaySupply;
+  document.getElementById('todayIn').textContent = fmt(todayIn);
+  document.getElementById('todaySupply').textContent = '-' + fmt(todaySupply);
+  document.getElementById('todayOut').textContent = '-' + fmt(todayOut);
+  const todayNet = todayIn - todaySupply - todayOut;
+  const todayNetEl = document.getElementById('todayNet');
+  todayNetEl.textContent = fmtSigned(todayNet);
+  todayNetEl.style.color = todayNet >= 0 ? 'var(--green)' : 'var(--red)';
+
+  // Месяц
+  const mIn = sum(monthOps, 'income');
+  const mSupply = sumCat(monthOps, 'supply');
+  const mRent = sumCat(monthOps, 'rent');
+  const mSalary = sumCat(monthOps, 'salary');
+  const mOther = sumCat(monthOps, 'other_out');
+  const mPersonal = sumCat(monthOps, 'personal');
+  const mNet = mIn - mSupply - mRent - mSalary - mOther - mPersonal;
+
+  // Месяц — переменные нужны для Hero/копилки/алертов (сами элементы перенесены в Дашборд)
+  document.getElementById('mIn') && (document.getElementById('mIn').textContent = fmt(mIn));
+  document.getElementById('mSupply') && (document.getElementById('mSupply').textContent = '-' + fmt(mSupply));
+  document.getElementById('mRent') && (document.getElementById('mRent').textContent = '-' + fmt(mRent));
+  document.getElementById('mSalary') && (document.getElementById('mSalary').textContent = '-' + fmt(mSalary));
+  document.getElementById('mOther') && (document.getElementById('mOther').textContent = '-' + fmt(mOther));
+  document.getElementById('mPersonal') && (document.getElementById('mPersonal').textContent = '-' + fmt(mPersonal));
+
+  const mNetEl = document.getElementById('mNet');
+  if (mNetEl) {
+    mNetEl.textContent = fmtSigned(mNet);
+    mNetEl.style.color = mNet >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+
+  // Hero
+  const heroEl = document.getElementById('netMonth');
+  heroEl.textContent = fmtSigned(mNet);
+  heroEl.className = 'big num ' + (mNet >= 0 ? 'green' : 'red');
+  document.getElementById('netSub').textContent =
+    mNet >= 0 ? `Из них можно тратить: ${fmt(mNet)}` : 'Минус — потратил больше чем заработал!';
+
+  // Копилка месяца
+  renderSavings(mIn);
+
+  // Долг маме
+  renderDebt(monthOps);
+
+  // AI alerts
+  renderAlerts({ mIn, mSupply, mNet, mPersonal });
+
+  // Цель
+  renderGoal();
+
+  // Лента
+  renderOps();
+
+  // Столбики недели
+  renderWeekBars();
+
+  // Период в шапке
+  const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  const now = new Date();
+  document.getElementById('periodBtn').textContent = `${months[now.getMonth()]} ${now.getFullYear()}`;
+}
+
+function sum(ops, type) {
+  return ops.filter(o => o.type === type).reduce((s, o) => s + o.amount, 0);
+}
+function sumByType(ops, type) {
+  return sum(ops, type);
+}
+function sumCat(ops, cat) {
+  return ops.filter(o => o.cat === cat).reduce((s, o) => s + o.amount, 0);
+}
+
+// Сколько отложено за период
+function sumSaved(ops) {
+  return ops.filter(o => o.type === 'save').reduce((s, o) => s + o.amount, 0);
+}
+
+// Рендер копилки месяца
+function renderSavings(monthIncome) {
+  const monthOps = state.ops.filter(o => isCurrentMonth(o.date));
+  const saved = sumSaved(monthOps);
+  const plan = monthIncome * (state.savePct / 100);
+  const pct = plan > 0 ? Math.min(100, (saved / plan) * 100) : 0;
+  const left = Math.max(0, plan - saved);
+
+  document.getElementById('savedMonth').textContent = fmt(saved);
+  document.getElementById('savePlan').textContent = fmt(plan);
+  document.getElementById('savePctLabel').textContent = state.savePct;
+  document.getElementById('saveBar').style.width = pct + '%';
+  document.getElementById('savePctDone').textContent = pct.toFixed(0);
+  document.getElementById('saveLeftLabel').innerHTML = `Остаток плана: <span class="num">${fmt(left).replace(' ₸','')}</span> ₸`;
+}
+
+// Рендер долга маме
+function renderDebt(monthOps) {
+  const el = document.getElementById('debtAmt');
+  if (!el) return;
+  el.textContent = fmt(state.motherDebt);
+  // Цвет в зависимости от размера
+  if (state.motherDebt === 0) el.style.color = 'var(--green)';
+  else if (state.motherDebt < 1000000) el.style.color = 'var(--orange)';
+  else el.style.color = 'var(--red)';
+
+  // За месяц погашено = сумма расходов в категории supply
+  const paid = sumCat(monthOps, 'supply');
+  document.getElementById('debtPaidMonth').textContent = fmt(paid);
+}
+
+// === Модалка ДОЛГ МАМЕ ===
+function openDebtModal() {
+  document.getElementById('debtAmount').value = state.motherDebt;
+  document.getElementById('debtModal').classList.add('show');
+  setTimeout(() => document.getElementById('debtAmount').focus(), 100);
+}
+
+function closeDebtModal() {
+  document.getElementById('debtModal').classList.remove('show');
+}
+
+function debtAdd(delta) {
+  const cur = parseFloat(document.getElementById('debtAmount').value) || 0;
+  document.getElementById('debtAmount').value = Math.max(0, cur + delta);
+}
+
+function debtSet(v) {
+  document.getElementById('debtAmount').value = v;
+}
+
+function doSaveDebt() {
+  const amount = parseFloat(document.getElementById('debtAmount').value);
+  if (isNaN(amount) || amount < 0) {
+    alert('Введи сумму (можно 0)');
+    return;
+  }
+  state.motherDebt = amount;
+  save();
+  render();
+  closeDebtModal();
+}
+
+// === ДАШБОРД ===
+let dashRange = { from: null, to: null, label: 'Этот месяц' };
+
+function setRange(preset) {
+  const now = new Date();
+  const ymd = (d) => d.toISOString().slice(0,10);
+  if (preset === 'today') {
+    dashRange = { from: ymd(now), to: ymd(now), label: 'Сегодня' };
+  } else if (preset === 'week') {
+    const w = new Date(now); w.setDate(w.getDate() - 6);
+    dashRange = { from: ymd(w), to: ymd(now), label: '7 дней' };
+  } else if (preset === 'month') {
+    const m = new Date(now.getFullYear(), now.getMonth(), 1);
+    dashRange = { from: ymd(m), to: ymd(now), label: 'Этот месяц' };
+  } else if (preset === 'prev_month') {
+    const start = new Date(now.getFullYear(), now.getMonth()-1, 1);
+    const end = new Date(now.getFullYear(), now.getMonth(), 0);
+    dashRange = { from: ymd(start), to: ymd(end), label: 'Прошлый месяц' };
+  } else if (preset === 'quarter') {
+    const q = new Date(now); q.setMonth(q.getMonth() - 3);
+    dashRange = { from: ymd(q), to: ymd(now), label: '3 месяца' };
+  } else if (preset === 'all') {
+    dashRange = { from: '2000-01-01', to: ymd(now), label: 'Всё время' };
+  }
+  document.getElementById('rangeFrom').value = dashRange.from;
+  document.getElementById('rangeTo').value = dashRange.to;
+  renderDashboard();
+}
+
+function applyRange() {
+  const from = document.getElementById('rangeFrom').value;
+  const to = document.getElementById('rangeTo').value;
+  if (!from || !to) { alert('Заполни обе даты'); return; }
+  if (from > to) { alert('Дата от больше чем до'); return; }
+  dashRange = { from, to, label: `${fmtDate(from)} – ${fmtDate(to)}` };
+  renderDashboard();
+}
+
+function inRange(dateStr) {
+  return dateStr >= dashRange.from && dateStr <= dashRange.to;
+}
+
+function renderDashboard() {
+  if (!dashRange.from) {
+    // первая загрузка — текущий месяц
+    setRange('month');
+    return;
+  }
+  const ops = state.ops.filter(o => inRange(o.date));
+
+  const dIn = sum(ops, 'income');
+  const dSupply = sumCat(ops, 'supply');
+  const dRent = sumCat(ops, 'rent');
+  const dSalary = sumCat(ops, 'salary');
+  const dOther = sumCat(ops, 'other_out');
+  const dPersonal = sumCat(ops, 'personal');
+  const dSaved = sumSaved(ops);
+  const dNet = dIn - dSupply - dRent - dSalary - dOther - dPersonal;
+
+  document.getElementById('dIn').textContent = fmt(dIn);
+  document.getElementById('dSupply').textContent = '-' + fmt(dSupply);
+  document.getElementById('dRent').textContent = '-' + fmt(dRent);
+  document.getElementById('dSalary').textContent = '-' + fmt(dSalary);
+  document.getElementById('dOther').textContent = '-' + fmt(dOther);
+  document.getElementById('dPersonal').textContent = '-' + fmt(dPersonal);
+  document.getElementById('dSaved').textContent = '↗ ' + fmt(dSaved);
+
+  const dNetRow = document.getElementById('dNetRow');
+  dNetRow.textContent = fmtSigned(dNet);
+  dNetRow.style.color = dNet >= 0 ? 'var(--green)' : 'var(--red)';
+
+  const heroNet = document.getElementById('dashNet');
+  heroNet.textContent = fmtSigned(dNet);
+  heroNet.style.color = dNet >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('dashNetSub').textContent = `${dashRange.label} · выручка ${fmt(dIn)}`;
+  document.getElementById('rangeLabel').textContent = `Сейчас показано: ${dashRange.label} (${fmtDate(dashRange.from)} – ${fmtDate(dashRange.to)})`;
+
+  renderPie(dSupply, dRent, dSalary, dOther, dPersonal, dSaved);
+  renderDailyBars(ops, dashRange.from, dashRange.to);
+  renderTopDays(ops);
+}
+
+function renderPie(supply, rent, salary, other, personal, saved) {
+  const items = [
+    { label: '📦 Товар маме', value: supply, color: '#5D4037' },
+    { label: '🏠 Аренда', value: rent, color: '#8C7B70' },
+    { label: '👥 Зарплаты', value: salary, color: '#BA7517' },
+    { label: '📋 Прочее', value: other, color: '#FFA000' },
+    { label: '👤 Личное', value: personal, color: '#C73E3E' },
+    { label: '📥 Отложено', value: saved, color: '#1D9E75' }
+  ].filter(x => x.value > 0);
+  const total = items.reduce((s, x) => s + x.value, 0);
+  if (total === 0) {
+    document.getElementById('pieChart').innerHTML = '<div style="width:120px; height:120px; border-radius:50%; background:var(--line-soft); display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:11px;">Нет данных</div>';
+    document.getElementById('pieLegend').innerHTML = '';
+    return;
+  }
+  // Рисуем SVG-пирог
+  let startAngle = -90;
+  let paths = '';
+  items.forEach(item => {
+    const angle = (item.value / total) * 360;
+    const endAngle = startAngle + angle;
+    const x1 = 60 + 55 * Math.cos(startAngle * Math.PI / 180);
+    const y1 = 60 + 55 * Math.sin(startAngle * Math.PI / 180);
+    const x2 = 60 + 55 * Math.cos(endAngle * Math.PI / 180);
+    const y2 = 60 + 55 * Math.sin(endAngle * Math.PI / 180);
+    const large = angle > 180 ? 1 : 0;
+    paths += `<path d="M 60 60 L ${x1.toFixed(2)} ${y1.toFixed(2)} A 55 55 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z" fill="${item.color}" stroke="white" stroke-width="2"/>`;
+    startAngle = endAngle;
+  });
+  document.getElementById('pieChart').innerHTML = `<svg width="120" height="120" viewBox="0 0 120 120">${paths}<circle cx="60" cy="60" r="22" fill="white"/></svg>`;
+  document.getElementById('pieLegend').innerHTML = items.map(item => {
+    const pct = (item.value / total * 100).toFixed(0);
+    return `<div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+      <span style="width:10px; height:10px; background:${item.color}; border-radius:2px; flex-shrink:0;"></span>
+      <span style="flex:1; font-size:12px;">${item.label}</span>
+      <span class="num" style="font-size:12px; font-weight:600;">${pct}%</span>
+    </div>`;
+  }).join('');
+}
+
+function renderDailyBars(ops, fromStr, toStr) {
+  const from = new Date(fromStr);
+  const to = new Date(toStr);
+  const days = [];
+  const cur = new Date(from);
+  while (cur <= to) {
+    const ds = cur.toISOString().slice(0,10);
+    const dayOps = ops.filter(o => o.date === ds);
+    const inSum = sum(dayOps, 'income');
+    const outSum = sum(dayOps, 'expense');
+    days.push({ ds, inSum, outSum, net: inSum - outSum, label: cur.getDate() + '.' + (cur.getMonth()+1) });
+    cur.setDate(cur.getDate() + 1);
+  }
+  // Если дней > 31 — группируем по неделям, чтобы помещалось
+  let bins = days;
+  if (days.length > 31) {
+    bins = [];
+    for (let i = 0; i < days.length; i += 7) {
+      const slice = days.slice(i, i + 7);
+      bins.push({
+        ds: slice[0].ds,
+        inSum: slice.reduce((s,d) => s + d.inSum, 0),
+        outSum: slice.reduce((s,d) => s + d.outSum, 0),
+        net: slice.reduce((s,d) => s + d.net, 0),
+        label: slice[0].label + (slice.length > 1 ? '—' + slice[slice.length-1].label : '')
+      });
+    }
+  }
+  const max = Math.max(1, ...bins.map(d => Math.max(d.inSum, d.outSum, Math.abs(d.net))));
+  document.getElementById('dailyBars').innerHTML = bins.map(d => {
+    const inH = d.inSum/max*90;
+    const outH = d.outSum/max*90;
+    const netH = Math.abs(d.net)/max*90;
+    return `<div style="flex-shrink:0; min-width:20px; display:flex; flex-direction:column; align-items:center; gap:2px;">
+      <div style="display:flex; gap:1px; align-items:flex-end; height:100px;">
+        <div title="Доход ${fmt(d.inSum)}" style="width:5px; height:${Math.max(1,inH)}px; background: var(--gold); border-radius:1px;"></div>
+        <div title="Расход ${fmt(d.outSum)}" style="width:5px; height:${Math.max(1,outH)}px; background: var(--brand); border-radius:1px;"></div>
+        <div title="Чистый ${fmt(d.net)}" style="width:5px; height:${Math.max(1,netH)}px; background: ${d.net>=0?'var(--green)':'var(--red)'}; border-radius:1px;"></div>
+      </div>
+      <div style="font-size:9px; color:var(--muted); transform:rotate(-45deg); transform-origin: top left; white-space:nowrap;">${d.label}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderTopDays(ops) {
+  // Группируем по дате
+  const byDate = {};
+  ops.forEach(o => {
+    if (!byDate[o.date]) byDate[o.date] = { date: o.date, inSum: 0, outSum: 0 };
+    if (o.type === 'income') byDate[o.date].inSum += o.amount;
+    else if (o.type === 'expense') byDate[o.date].outSum += o.amount;
+  });
+  const arr = Object.values(byDate).map(d => ({ ...d, net: d.inSum - d.outSum }));
+  if (arr.length === 0) {
+    document.getElementById('topDays').innerHTML = '<div class="empty">Нет данных</div>';
+    return;
+  }
+  arr.sort((a, b) => b.net - a.net);
+  const top3 = arr.slice(0, 3);
+  const bot3 = arr.slice(-3).reverse();
+  const renderList = (list, label, color) => `
+    <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin: 8px 0 4px;">${label}</div>
+    ${list.map(d => `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid var(--line-soft);">
+      <span>${fmtDate(d.date)}</span>
+      <span class="num" style="font-weight:600; color:${color};">${fmtSigned(d.net)}</span>
+    </div>`).join('')}
+  `;
+  document.getElementById('topDays').innerHTML =
+    renderList(top3, '🟢 Лучшие', 'var(--green)') +
+    renderList(bot3, '🔴 Худшие', 'var(--red)');
+}
+
+// === ФИЛЬТР ЛЕНТЫ ===
+let opFilter = { type: 'all', range: 'month' };
+
+function setOpFilter(type) {
+  opFilter.type = type;
+  document.querySelectorAll('.ftype').forEach(b => {
+    b.classList.toggle('active', b.dataset.ftype === type);
+  });
+  renderOps();
+}
+
+function setOpRange(range) {
+  opFilter.range = range;
+  renderOps();
+}
+
+// AI подсказки
+function renderAlerts({ mIn, mSupply, mNet, mPersonal }) {
+  const alerts = [];
+  const monthOps = state.ops.filter(o => isCurrentMonth(o.date));
+  const monthSaved = sumSaved(monthOps);
+  const plan = mIn * state.savePct / 100;
+
+  if (mNet < 0) {
+    alerts.push({ type: 'warn', icon: '⚠️', text: `Ты ушёл в минус на ${fmt(-mNet)}. Срочно сокращай расходы или ищи приход!` });
+  }
+
+  if (mPersonal > 0 && mNet > 0 && mPersonal > mNet * 0.5) {
+    alerts.push({ type: 'warn', icon: '🚨', text: `На личные ушло ${fmt(mPersonal)} — это больше половины чистой прибыли. Полегче!` });
+  }
+
+  if (mIn > 0 && mSupply > mIn * 0.7) {
+    alerts.push({ type: 'hot', icon: '📦', text: `Товара взял много — ${Math.round(mSupply / mIn * 100)}% от выручки. Может, перетарка?` });
+  }
+
+  // Долг маме
+  if (state.motherDebt > 2000000) {
+    alerts.push({ type: 'warn', icon: '👩', text: `Долг маме ${fmt(state.motherDebt)} — большой. Постарайся погасить.` });
+  } else if (state.motherDebt > 0 && mIn > state.motherDebt * 0.3) {
+    alerts.push({ type: 'info', icon: '👩', text: `Долг маме: ${fmt(state.motherDebt)}. Можно частично погасить из выручки.` });
+  }
+
+  // Копилка
+  if (mIn > 500000 && monthSaved === 0) {
+    alerts.push({ type: 'hot', icon: '📥', text: `Выручка уже ${fmt(mIn)}, а в копилку 0. Жми «Отложить» — хотя бы ${fmt(plan)}.` });
+  } else if (plan > 0 && monthSaved < plan * 0.5 && mNet > 0) {
+    alerts.push({ type: 'info', icon: '📥', text: `До плана копилки осталось ${fmt(plan - monthSaved)}. Не забывай!` });
+  } else if (monthSaved >= plan && plan > 0) {
+    alerts.push({ type: 'ok', icon: '🎯', text: `План копилки на месяц выполнен! Отложено ${fmt(monthSaved)}.` });
+  }
+
+  if (state.ops.length === 0) {
+    alerts.push({ type: 'info', icon: '👋', text: `Привет! Жми «➕ Приход» когда придёт выручка, и «➖ Расход» когда платишь. «📥 Отложить» — когда хочешь увести часть на депозит.` });
+  }
+
+  const html = alerts.map(a => `
+    <div class="ai-alert ${a.type}">
+      <div class="ai-icon">${a.icon}</div>
+      <div class="ai-text">${a.text}</div>
+    </div>
+  `).join('');
+  document.getElementById('aiAlerts').innerHTML = html;
+}
+
+function renderGoal() {
+  const saved = state.deposit + state.invest;
+  const pct = Math.min(100, (saved / state.goal) * 100);
+  document.getElementById('goalNow').textContent = fmt(saved);
+  document.getElementById('goalTarget').textContent = state.goal.toLocaleString('ru-RU').replace(/,/g,' ');
+  document.getElementById('goalBar').style.width = pct + '%';
+  document.getElementById('goalPct').textContent = pct.toFixed(1);
+  document.getElementById('goalLeft').textContent = Math.max(0, state.goal - saved).toLocaleString('ru-RU').replace(/,/g,' ');
+  document.getElementById('depAmt').textContent = fmt(state.deposit);
+  document.getElementById('invAmt').textContent = fmt(state.invest);
+  document.getElementById('savedTotal').textContent = fmt(saved);
+  // Подставляем в поля настроек
+  document.getElementById('inGoal').value = state.goal;
+  document.getElementById('inDep').value = state.deposit;
+  document.getElementById('inInv').value = state.invest;
+  document.getElementById('inSavePct').value = state.savePct;
+  // Последний SAVE
+  const lastSaveEl = document.getElementById('lastSaveLabel');
+  if (lastSaveEl) {
+    if (state.lastSave) {
+      const d = new Date(state.lastSave);
+      const daysAgo = Math.floor((Date.now() - d.getTime()) / 86400000);
+      let txt = `Последний SAVE: ${fmtDate(d.toISOString().slice(0,10))} в ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      if (daysAgo > 7) txt += ` · ⚠️ ${daysAgo} дней назад — пора!`;
+      else if (daysAgo > 0) txt += ` · ${daysAgo} дн. назад`;
+      lastSaveEl.textContent = txt;
+    } else {
+      lastSaveEl.textContent = 'Ещё не сохранял в файл';
+    }
+  }
+}
+
+function renderOps() {
+  const list = document.getElementById('opsList');
+  // Фильтрация по периоду
+  let filtered = [...state.ops];
+  if (opFilter.range === 'week') {
+    const now = new Date();
+    const w = new Date(now); w.setDate(w.getDate() - 6);
+    const wStr = w.toISOString().slice(0,10);
+    filtered = filtered.filter(o => o.date >= wStr);
+  } else if (opFilter.range === 'month') {
+    filtered = filtered.filter(o => isCurrentMonth(o.date));
+  }
+  // Фильтрация по типу
+  if (opFilter.type !== 'all') {
+    filtered = filtered.filter(o => o.type === opFilter.type);
+  }
+  // Сортировка
+  const sorted = filtered.sort((a, b) => b.date.localeCompare(a.date) || (b.ts - a.ts));
+
+  // Метка периода
+  const rangeLabel = document.getElementById('opsRangeLabel');
+  if (rangeLabel) {
+    const labels = { week: 'за 7 дней', month: 'за этот месяц', all: 'всё время' };
+    rangeLabel.textContent = `Фильтр: ${labels[opFilter.range] || ''}, ${filtered.length} операций`;
+  }
+  const cnt = document.getElementById('opsCount');
+  if (cnt) cnt.textContent = '(' + filtered.length + ')';
+
+  if (sorted.length === 0) {
+    list.innerHTML = '<div class="empty">Операций нет за этот период.</div>';
+    return;
+  }
+  list.innerHTML = sorted.map(o => {
+    let cat, isIn, sign, iconClass, amountClass;
+    if (o.type === 'save') {
+      cat = { name: o.cat === 'deposit' ? 'Отложил на депозит' : 'Отложил в инвестиции', icon: '📥' };
+      isIn = false;
+      sign = '↗';
+      iconClass = 'save';
+      amountClass = 'save';
+    } else {
+      cat = CATEGORIES[o.type].find(c => c.id === o.cat) || { name: o.cat, icon: '•' };
+      isIn = o.type === 'income';
+      sign = isIn ? '+' : '-';
+      iconClass = isIn ? 'in' : 'out';
+      amountClass = isIn ? 'in' : 'out';
+    }
+    return `
+      <div class="op">
+        <div class="op-icon ${iconClass}">${cat.icon}</div>
+        <div class="op-info">
+          <div class="op-name">${cat.name}${o.note && o.type !== 'save' ? ' · ' + escapeHtml(o.note) : ''}</div>
+          <div class="op-meta">${fmtDate(o.date)}</div>
+        </div>
+        <div class="op-amount ${amountClass}">${sign}${fmt(o.amount)}</div>
+        <button class="op-del" onclick="delOp('${o.id}')" title="Удалить">×</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function fmtDate(dateStr) {
+  const [y,m,d] = dateStr.split('-');
+  return `${d}.${m}.${y}`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderWeekBars() {
+  const days = [];
+  const now = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0,10);
+    const dayOps = state.ops.filter(o => o.date === ds);
+    const inSum = sum(dayOps, 'income');
+    const outSum = sum(dayOps, 'expense');
+    const net = inSum - outSum;
+    days.push({ ds, net, label: String(d.getDate()) });
+  }
+  const max = Math.max(1, ...days.map(d => Math.abs(d.net)));
+  document.getElementById('weekBars').innerHTML = days.map(d => `
+    <div class="bar-col">
+      <div class="bar-fill" style="height: ${Math.max(2, Math.abs(d.net)/max*90)}px; background: ${d.net >= 0 ? 'linear-gradient(180deg, var(--gold) 0%, var(--gold-dark) 100%)' : 'linear-gradient(180deg, #E89797 0%, var(--red) 100%)'};"></div>
+      <div class="bar-label">${d.label}</div>
+    </div>
+  `).join('');
+}
+
+// Модалка
+function openModal(type) {
+  modalType = type;
+  selectedCat = CATEGORIES[type][0].id;
+  document.getElementById('modalTitle').textContent = type === 'income' ? '➕ Приход денег' : '➖ Расход';
+  document.getElementById('inAmount').value = '';
+  document.getElementById('inDate').value = today();
+  document.getElementById('inNote').value = '';
+  renderCatGrid();
+  document.getElementById('modal').classList.add('show');
+  setTimeout(() => document.getElementById('inAmount').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+function renderCatGrid() {
+  const grid = document.getElementById('catGrid');
+  grid.innerHTML = CATEGORIES[modalType].map(c => `
+    <button class="cat-btn ${c.id === selectedCat ? 'active' : ''}" onclick="selCat('${c.id}')">
+      <span class="cat-icon">${c.icon}</span>${c.name}
+    </button>
+  `).join('');
+}
+
+function selCat(id) {
+  selectedCat = id;
+  renderCatGrid();
+}
+
+function saveOp() {
+  const amount = parseFloat(document.getElementById('inAmount').value);
+  if (!amount || amount <= 0) {
+    alert('Введи сумму');
+    return;
+  }
+  const date = document.getElementById('inDate').value || today();
+  const note = document.getElementById('inNote').value.trim();
+  state.ops.push({
+    id: 'op_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+    ts: Date.now(),
+    type: modalType,
+    cat: selectedCat,
+    amount,
+    date,
+    note
+  });
+
+  // Если это расход на товар маме — уменьшаем долг
+  if (modalType === 'expense' && selectedCat === 'supply') {
+    state.motherDebt = Math.max(0, state.motherDebt - amount);
+  }
+
+  save();
+  render();
+  closeModal();
+}
+
+// === Модалка ОТЛОЖИТЬ ===
+let saveToTarget = 'deposit';
+
+function openSaveModal() {
+  saveToTarget = state.saveTo || 'deposit';
+  document.getElementById('saveAmount').value = '';
+  document.getElementById('saveDate').value = today();
+  updateSaveHint();
+  updateSaveToButtons();
+  document.getElementById('saveModal').classList.add('show');
+  setTimeout(() => document.getElementById('saveAmount').focus(), 100);
+}
+
+function closeSaveModal() {
+  document.getElementById('saveModal').classList.remove('show');
+}
+
+function updateSaveHint() {
+  const todayOps = state.ops.filter(o => isToday(o.date));
+  const todayIn = sum(todayOps, 'income');
+  const pct = state.savePct;
+  const v = todayIn * pct / 100;
+  document.getElementById('saveHint').textContent =
+    `Сегодня выручка: ${fmt(todayIn)}. ${pct}% = ${fmt(v)}`;
+}
+
+function updateSaveToButtons() {
+  document.getElementById('saveToDep').classList.toggle('active', saveToTarget === 'deposit');
+  document.getElementById('saveToInv').classList.toggle('active', saveToTarget === 'invest');
+}
+
+function selSaveTo(t) {
+  saveToTarget = t;
+  updateSaveToButtons();
+}
+
+function quickSave(pct, scope) {
+  let amount = 0;
+  const monthOps = state.ops.filter(o => isCurrentMonth(o.date));
+  const monthIn = sum(monthOps, 'income');
+  const todayOps = state.ops.filter(o => isToday(o.date));
+  const todayIn = sum(todayOps, 'income');
+
+  if (scope === 'today') {
+    amount = todayIn * pct / 100;
+  } else if (scope === 'month') {
+    amount = monthIn * pct / 100;
+  } else if (scope === 'plan') {
+    // до плана месяца
+    const plan = monthIn * state.savePct / 100;
+    const alreadySaved = sumSaved(monthOps);
+    amount = Math.max(0, plan - alreadySaved);
+  }
+  document.getElementById('saveAmount').value = Math.round(amount);
+}
+
+function doSave() {
+  const amount = parseFloat(document.getElementById('saveAmount').value);
+  if (!amount || amount <= 0) {
+    alert('Введи сумму');
+    return;
+  }
+  const date = document.getElementById('saveDate').value || today();
+
+  // Добавляем операцию
+  state.ops.push({
+    id: 'op_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+    ts: Date.now(),
+    type: 'save',
+    cat: saveToTarget,
+    amount,
+    date,
+    note: saveToTarget === 'deposit' ? 'на депозит' : 'в инвестиции'
+  });
+
+  // Увеличиваем баланс
+  if (saveToTarget === 'deposit') {
+    state.deposit += amount;
+  } else {
+    state.invest += amount;
+  }
+  state.saveTo = saveToTarget;
+
+  save();
+  render();
+  closeSaveModal();
+}
+
+function delOp(id) {
+  if (!confirm('Удалить эту операцию?')) return;
+  const op = state.ops.find(o => o.id === id);
+  if (op && op.type === 'save') {
+    if (op.cat === 'deposit') state.deposit = Math.max(0, state.deposit - op.amount);
+    else if (op.cat === 'invest') state.invest = Math.max(0, state.invest - op.amount);
+  }
+  // Если был расход на товар маме — возвращаем долг
+  if (op && op.type === 'expense' && op.cat === 'supply') {
+    state.motherDebt += op.amount;
+  }
+  state.ops = state.ops.filter(o => o.id !== id);
+  save();
+  render();
+}
+
+function saveGoal() {
+  state.goal = parseFloat(document.getElementById('inGoal').value) || 0;
+  state.deposit = parseFloat(document.getElementById('inDep').value) || 0;
+  state.invest = parseFloat(document.getElementById('inInv').value) || 0;
+  const pct = parseFloat(document.getElementById('inSavePct').value);
+  if (!isNaN(pct) && pct >= 0 && pct <= 100) state.savePct = pct;
+  save();
+  render();
+  alert('Сохранено');
+}
+
+// Экспорт/импорт
+function exportData() {
+  const now = new Date();
+  state.lastSave = now.toISOString();
+  save();
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const stamp = now.toISOString().slice(0,10) + '_' + String(now.getHours()).padStart(2,'0') + '-' + String(now.getMinutes()).padStart(2,'0');
+  a.download = `bashmachok-money-${stamp}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  render();
+  alert('SAVE-файл скачан');
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!confirm('Загрузить SAVE-файл? Текущие данные будут заменены.')) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.ops && Array.isArray(data.ops)) {
+        state = Object.assign(state, data);
+        save();
+        render();
+        alert('SAVE-файл успешно загружен');
+      } else alert('Файл не подходит');
+    } catch { alert('Ошибка чтения файла'); }
+  };
+  reader.readAsText(file);
+}
+
+// Табы
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+    document.getElementById('page-' + t.dataset.tab).classList.remove('hidden');
+    // При переходе на дашборд — рендерим
+    if (t.dataset.tab === 'dash') {
+      renderDashboard();
+    }
+  });
+});
+
+// Закрытие модалки кликом на фон
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target.id === 'modal') closeModal();
+});
+document.getElementById('saveModal').addEventListener('click', (e) => {
+  if (e.target.id === 'saveModal') closeSaveModal();
+});
+document.getElementById('debtModal').addEventListener('click', (e) => {
+  if (e.target.id === 'debtModal') closeDebtModal();
+});
+
+// Старт
+load();
+render();
+</script>
+</body>
+</html>
